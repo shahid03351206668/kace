@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-25 15:46:03.633977",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "default_face_verification",
+  "send_notification",
+  "min_hours",
+  "column_break_mnsj",
+  "max_hours",
+  "notification_checkin_time"
+ ],
+ "fields": [
+  {
+   "default": "Face Recognition",
+   "fieldname": "default_face_verification",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Default Face Verification",
+   "options": "Image\nFace Recognition"
+  },
+  {
+   "default": "600",
+   "fieldname": "notification_checkin_time",
+   "fieldtype": "Duration",
+   "hidden": 1,
+   "label": "Notification CheckIn Time"
+  },
+  {
+   "fieldname": "send_notification",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Send Notification"
+  },
+  {
+   "fieldname": "min_hours",
+   "fieldtype": "Duration",
+   "label": "Min Hours"
+  },
+  {
+   "fieldname": "column_break_mnsj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "max_hours",
+   "fieldtype": "Duration",
+   "label": "Max Hours"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-04-23 20:24:07.511425",
+ "modified_by": "Administrator",
+ "module": "KACE",
+ "name": "Kace Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

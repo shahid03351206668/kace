@@ -129,42 +129,47 @@ app_license = "mit"
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {"Shift Type": "kace.shift_type_custom.ShiftTypeCustom"}
 
 # Document Events
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    # "*": {
+    # 	"on_update": "method",
+    # 	"on_cancel": "method",
+    # 	"on_trash": "method"
+    # }
+    "Employee Checkin": {
+        "after_insert": "kace.main.employee_checkin_after_insert",
+        "validate": "kace.main.employee_checkin_validate",
+    }
+}
 
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"kace.tasks.all"
-# 	],
-# 	"daily": [
-# 		"kace.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"kace.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"kace.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"kace.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+    # "all": [
+    # 	"kace.tasks.all"
+    # ],
+    "daily": ["kace.main.update_employee_attendance"],
+    # "hourly": [
+    # 	"kace.tasks.hourly"
+    # ],
+    # "weekly": [
+    # 	"kace.tasks.weekly"
+    # ],
+    # "monthly": [
+    # 	"kace.tasks.monthly"
+    # ],
+    "cron": {
+        "0/5 * * * *": [
+            "kace.kace.doctype.notification_schedule.notification_schedule.send_schedule_notifications"
+        ]
+    },
+}
 
 # Testing
 # -------
@@ -242,3 +247,8 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+
+fixtures = [
+    {"dt": "Custom Field", "filters": {"module": "KACEF"}},
+    {"dt": "Client Script", "filters": {"module": "KACEF"}},
+]

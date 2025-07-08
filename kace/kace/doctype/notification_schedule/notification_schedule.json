@@ -1,0 +1,146 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:NS-{#####}",
+ "creation": "2025-04-22 14:12:39.609948",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_9upg",
+  "amended_from",
+  "section_break_mviw",
+  "alert_type",
+  "schedule_time",
+  "column_break_vwzv",
+  "notification_timeout",
+  "filters_section",
+  "employee",
+  "branch",
+  "get_employee",
+  "column_break_dqnc",
+  "designation",
+  "department",
+  "section_break_bnqu",
+  "employees"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_9upg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Notification Schedule",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "filters_section",
+   "fieldtype": "Section Break",
+   "label": "Filters"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "column_break_dqnc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "designation",
+   "fieldtype": "Link",
+   "label": "Designation",
+   "options": "Designation"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department"
+  },
+  {
+   "fieldname": "get_employee",
+   "fieldtype": "Button",
+   "label": "Get Employee"
+  },
+  {
+   "fieldname": "section_break_bnqu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_mviw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "alert_type",
+   "fieldtype": "Select",
+   "label": "Alert Type",
+   "options": "Immediate\nScheduled",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval: doc.alert_type === \"Scheduled\" ;",
+   "fieldname": "schedule_time",
+   "fieldtype": "Datetime",
+   "label": "Schedule Time",
+   "mandatory_depends_on": "eval: doc.alert_type === \"Scheduled\" ;"
+  },
+  {
+   "fieldname": "column_break_vwzv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "notification_timeout",
+   "fieldtype": "Duration",
+   "in_list_view": 1,
+   "label": "Notification Timeout",
+   "reqd": 1
+  },
+  {
+   "fieldname": "employees",
+   "fieldtype": "Table",
+   "label": "Employees",
+   "options": "Notification Schedule Employee"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-04-22 17:35:40.205200",
+ "modified_by": "Administrator",
+ "module": "KACE",
+ "name": "Notification Schedule",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

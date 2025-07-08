@@ -1,0 +1,146 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:location_name",
+ "creation": "2025-03-20 11:36:53.915679",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "location_details_section",
+  "location_name",
+  "longitude",
+  "latitude",
+  "column_break_xmkc",
+  "meters",
+  "section_break_nio1",
+  "map",
+  "filters_section",
+  "employee",
+  "branch",
+  "get_employees",
+  "column_break_oder",
+  "designation",
+  "department",
+  "section_break_ztly",
+  "item"
+ ],
+ "fields": [
+  {
+   "fieldname": "location_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Location Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "location_details_section",
+   "fieldtype": "Section Break",
+   "label": "Location Details"
+  },
+  {
+   "default": "99999",
+   "fieldname": "longitude",
+   "fieldtype": "Data",
+   "label": "Longitude",
+   "reqd": 1
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Data",
+   "label": "Latitude",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_xmkc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meters",
+   "fieldtype": "Float",
+   "label": "Meters",
+   "reqd": 1
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "get_employees",
+   "fieldtype": "Button",
+   "label": "Get Employees"
+  },
+  {
+   "fieldname": "designation",
+   "fieldtype": "Link",
+   "label": "Designation",
+   "options": "Designation"
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department"
+  },
+  {
+   "fieldname": "section_break_nio1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "filters_section",
+   "fieldtype": "Section Break",
+   "label": "Filters"
+  },
+  {
+   "fieldname": "column_break_oder",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "map",
+   "fieldtype": "Geolocation"
+  },
+  {
+   "fieldname": "section_break_ztly",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Table",
+   "label": "Employees",
+   "options": "Attendance Location Employee"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-06-03 19:10:23.854766",
+ "modified_by": "Administrator",
+ "module": "KACE",
+ "name": "Attendance Location",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
