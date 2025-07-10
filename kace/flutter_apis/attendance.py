@@ -32,10 +32,10 @@ def get_attendance(filters=None):
     list_filters = {}
     if filters.get("start_date"):
         list_filters["attendance_date"] = [">=", filters.get("start_date")]
-        query_conds += f" and attendance_date >= '{filters.get("start_date")}' "
+        query_conds += f""" and attendance_date >= '{filters.get("start_date")}' """
 
     if filters.get("end_date"):
-        query_conds += f" and attendance_date <= '{filters.get("end_date")}' "
+        query_conds += f""" and attendance_date <= '{filters.get("end_date")}' """
         list_filters["attendance_date"] = ["<=", filters.get("end_date")]
 
     user_records = frappe.get_list("Attendance", filters=list_filters)
