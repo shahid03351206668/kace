@@ -249,6 +249,6 @@ scheduler_events = {
 
 
 fixtures = [
-    {"dt": "Custom Field", "filters": {"module": "KACEF"}},
-    {"dt": "Client Script", "filters": {"module": "KACEF"}},
+    {"dt": "Custom Field", "filters": {"module": "KACE"}},
+    {"dt": "Client Script", "filters": {"module": "KACE"}},
 ]
