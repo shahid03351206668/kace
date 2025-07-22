@@ -29,7 +29,7 @@ def get_user_details(user=None):
         if user and user not in ["Guest"]:
             employee, employee_type = frappe.db.get_value(
                 "Employee", {"user_id": user}, ["name", "employee_type"]
-            )
+            ) or [None, None]
             # sales_person = frappe.db.get_value("Sales Person", {"user": user, "enabled": 1}, "name")
             user = frappe.get_doc("User", user)
             data = {
@@ -147,8 +147,11 @@ def subscribe_notifications(user_id, device_token, unsubscribe=False):
 
 
 def striphtml(data):
-    p = re.compile(r"<.*?>")
-    return p.sub("", data)
+    try:
+        p = re.compile(r"<.*?>")
+        return p.sub("", data)
+    except Exception:
+        return ""
 
 
 def send_notifications_users(self, method=None):

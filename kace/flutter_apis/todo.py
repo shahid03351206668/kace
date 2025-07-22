@@ -5,8 +5,11 @@ import re
 
 
 def striphtml(data):
-    p = re.compile(r"<.*?>")
-    return p.sub("", data)
+    try:
+        p = re.compile(r"<.*?>")
+        return p.sub("", data)
+    except Exception:
+        return ""
 
 
 @frappe.whitelist()
@@ -18,7 +21,7 @@ def get_user_todo():
         return
 
     todos = frappe.get_list(
-        "ToDd",
+        "ToDo",
         fields=[
             "status",
             "description",
@@ -78,7 +81,6 @@ def update_todo():
     if data:
         todo_doc = frappe.get_doc("ToDo", data.get("name"))
         if todo_doc:
-
             # for key in data.keys():
             #     setattr(todo_doc, key, data[key])
 
