@@ -344,7 +344,8 @@ def add_attendence():
     checkin_doc.device_id = request_data.get("location")
     checkin_doc.custom_latitude = request_data.get("latitude")
     checkin_doc.custom_longitude = request_data.get("longitude")
-
+    checkin_doc.latitude = request_data.get("latitude")
+    checkin_doc.logitude = request_data.get("longitude")
     checkin_doc.flags.ignore_permissions = True
     checkin_doc.save()
 
