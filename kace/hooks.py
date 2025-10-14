@@ -1,3 +1,5 @@
+from .main import Employee
+
 app_name = "kace"
 app_title = "KACE"
 app_publisher = "CodesSoft"
@@ -141,10 +143,15 @@ doc_events = {
     # 	"on_cancel": "method",
     # 	"on_trash": "method"
     # }
+    "Face Verification": {"after_insert": "kace.main.face_verification_after_insert"},
+    "Employee": {
+        "validate": "kace.main.validate_employee",
+        "after_insert": "kace.main.create_employee_user",
+    },
     "Employee Checkin": {
         "after_insert": "kace.main.employee_checkin_after_insert",
         "validate": "kace.main.employee_checkin_validate",
-    }
+    },
 }
 
 # Scheduled Tasks
@@ -154,7 +161,10 @@ scheduler_events = {
     # "all": [
     # 	"kace.tasks.all"
     # ],
-    "daily": ["kace.main.update_employee_attendance"],
+    "daily": [
+        # "kace.main.update_employee_attendance",
+        "kace.main.create_daily_attendance"
+    ],
     # "hourly": [
     # 	"kace.tasks.hourly"
     # ],
