@@ -12,7 +12,9 @@ from .kace_notification import get_access_token
 
 
 @frappe.whitelist(allow_guest=True)
-def update_face_verification_status(id, status): 
+def update_face_verification_status(id, status):
+    frappe.throw(status)
+    
     frappe.db.set_value("Face Verification", id, {"status": status})
     frappe.db.commit()
     frappe.response.message = "Face verification status updated successfully"
@@ -45,7 +47,7 @@ def face_verification_after_insert(self, method=None):
                     "message": {
                         "token": i,
                         "notification": {
-                            "title": "Kace",
+                            "title": "Kiosk",
                             "body": "You have new alert message",
                         },
                         "data": {

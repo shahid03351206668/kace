@@ -148,10 +148,10 @@ doc_events = {
         "validate": "kace.main.validate_employee",
         "after_insert": "kace.main.create_employee_user",
     },
-    "Employee Checkin": {
-        "after_insert": "kace.main.employee_checkin_after_insert",
-        "validate": "kace.main.employee_checkin_validate",
-    },
+    # "Employee Checkin": {
+    #     "after_insert": "kace.main.employee_checkin_after_insert",
+    #     "validate": "kace.main.employee_checkin_validate",
+    # },
 }
 
 # Scheduled Tasks
