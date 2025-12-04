@@ -45,7 +45,14 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+    "Employee" : "public/js/employee_custom.js",
+    "Location Request" : "public/js/location_request_custom.js",
+    "Attendance Location" : "public/js/attendance_location_custom.js",
+    "Employee Checkin" : "public/js/employee_checkin_custom.js",
+    "Kace Settings" : "public/js/kace_settings_custom.js",
+    "Notification Schedule" : "public/js/notification_schedule_custom.js",
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
