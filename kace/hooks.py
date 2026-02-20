@@ -52,6 +52,7 @@ doctype_js = {
     "Employee Checkin" : "public/js/employee_checkin_custom.js",
     "Kace Settings" : "public/js/kace_settings_custom.js",
     "Notification Schedule" : "public/js/notification_schedule_custom.js",
+    "Attendance Request": "public/js/attendance_request_custom.js"
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
