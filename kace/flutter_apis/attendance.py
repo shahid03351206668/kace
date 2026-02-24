@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timedelta
 from json import loads
 import json
+from frappe.utils import get_time
 
 import frappe
 from frappe.utils import cint, cstr, flt, get_datetime, getdate
@@ -309,66 +310,72 @@ def validate_checkout_record(employee, date, log_type):
 # 	return True, "Attendance Marked"
 
 
-def validate_checkin_records(log_type, employee, checkin_time):
-
+def validate_checkin_records(type, employee, date, checkin_time_only=None):
     settings = frappe.get_doc("Kace Settings", "Kace Settings")
-
     shift_name = frappe.db.get_value("Employee", employee, "default_shift")
     if not shift_name:
-        frappe.response["message"] = "Employee has no default shift assigned"
+        return False, "Employee has no default shift assigned"
 
     shift = frappe.get_doc("Shift Type", shift_name)
 
-    checkin_date = getdate(checkin_time)
+    shift_start_time = get_datetime(f"{getdate()} {shift.start_time}")
+    shift_end_time = get_datetime(f"{getdate()} {shift.end_time}")
 
-    shift_start_time = get_datetime(f"{checkin_date} {shift.start_time}")
-    shift_end_time = get_datetime(f"{checkin_date} {shift.end_time}")
-
- 
-    if log_type == "IN":
-
-        if checkin_time < shift_start_time:
-            frappe.response["message"] = "Cannot check in before shift start time"
-
-        # ⏰ Late but allowed
-        if cint(shift.late_entry_grace_period):
-            allowed_time = shift_start_time + timedelta(
-                minutes=cint(shift.late_entry_grace_period)
-            )
-
-            if checkin_time > allowed_time:
-                frappe.response["message"] = "Late Check-in"
-            
-        elif checkin_time > shift_start_time:
-            frappe.response["message"] = "Cannot check in after shift end time"
-
-        frappe.response["message"] = "Check-in Marked"
-
-    elif log_type == "OUT":
+    if type == "OUT":
+        # Block checkout after the shift end time
+        # if date > shift_end_time:
+        #     return False, "Cannot check out after the shift end time"
 
         checkin_record = frappe.db.sql(
-            """
-            SELECT time
-            FROM `tabEmployee Checkin`
-            WHERE employee = %s AND log_type = 'IN'
-            ORDER BY time DESC LIMIT 1
-            """,
-            (employee,),
+            "SELECT name, time FROM `tabEmployee Checkin` WHERE employee = '%s' AND log_type = 'IN' ORDER BY time DESC LIMIT 1"
+            % employee,
         )
 
         if not checkin_record:
-            frappe.response["message"] = "No check-in record found"
+            return (
+                False,
+                "Checkin record not found to validate this checkout record, attendance cannot be added",
+            )
+        checkin_time = checkin_record[0][1]
+        diff = (date - checkin_time).total_seconds() / 3600
+        shift_end_time_formatted = get_time(shift.end_time)
+        
+        
+        if checkin_time_only < shift_end_time_formatted:
+            if diff < cint(settings.min_hours) / 3600:
+                my_custom_time = cint(settings.min_hours) / 3600
+                return False, "Minimum working hours not met"
+            return True, "Early Check Out"
 
-        last_checkin_time = checkin_record[0][0]
+        
 
-        # ⏰ Early checkout (before shift end)
-        if checkin_time < shift_end_time:
-            frappe.response["message"] = "Early Check-out"
+        
 
-        frappe.response["message"] = "Check-out Marked"
+        # Your original early exit grace period logic stays here
+        if (
+            cint(shift.early_exit_grace_period)
+            and shift_end_time + timedelta(minutes=cint(shift.early_exit_grace_period))
+            < checkin_time
+        ):
+            return (
+                True,
+                "Checkin time is greater than checkout time but attendance added",
+            )
 
-    frappe.response["message"] = "Attendance Marked"
+    elif type == "IN":
+        # Block check-in before the shift start time
+        if date < shift_start_time:
+            return False, "Cannot check in before the shift start time"
 
+        if date > shift_end_time:
+            return False, "Cannot check in after shift end time"
+        
+        if cint(shift.late_entry_grace_period) and date > (
+            shift_start_time + timedelta(minutes=cint(shift.late_entry_grace_period))
+        ):
+            return True, "Late Arrival"
+
+    return True, "Attendance added"
 
 
 @frappe.whitelist(allow_guest=True)
@@ -385,6 +392,7 @@ def add_attendence():
     checkin_time = datetime.strptime(
         f"{request_data['date']} {request_data['time']}", "%Y-%m-%d %H:%M:%S"
     )
+    checkin_time_only = get_time(request_data['time'])
 
     employee_default_shift = frappe.db.get_value("Employee", employee, "default_shift")
 
@@ -392,7 +400,7 @@ def add_attendence():
         frappe.response["message"] = "Add Employee Default Shift"
         return
 
-    status, message = validate_checkin_records(log_type, employee, checkin_time)
+    status, message = validate_checkin_records(log_type, employee, checkin_time, checkin_time_only)
     if not status:
         frappe.response["message"] = message
         return
@@ -441,8 +449,8 @@ def add_attendence():
 
     frappe.response["message"] = message or "Attendance added"
     frappe.db.commit()
-    
-    
+
+
 @frappe.whitelist(allow_guest=True)
 def add_attendence_notification():
     request_data = None
@@ -494,9 +502,11 @@ def add_attendence_notification():
     frappe.db.commit()
     frappe.response["message"] = "Attendance added"
 
+
 @frappe.whitelist(allow_guest=True)
 def add_attendence_kiosk():
     request_data = json.loads(frappe.request.data)
+    # user = get_user_details()
 
     if not request_data:
         frappe.response["message"] = "Data not found"
@@ -504,81 +514,22 @@ def add_attendence_kiosk():
 
     log_type = request_data.get("type")
     employee = request_data.get("employee")
-
-    # Always convert using frappe utils (timezone safe)
-    checkin_time = get_datetime(
-        f"{request_data['date']} {request_data['time']}"
+    checkin_time = datetime.strptime(
+        f"{request_data['date']} {request_data['time']}", "%Y-%m-%d %H:%M:%S"
     )
 
-    shift_name = frappe.db.get_value("Employee", employee, "default_shift")
-    if not shift_name:
+    employee_default_shift = frappe.db.get_value("Employee", employee, "default_shift")
+
+    if not employee_default_shift:
         frappe.response["message"] = "Add Employee Default Shift"
         return
-
-    shift = frappe.get_doc("Shift Type", shift_name)
-
-    checkin_date = getdate(checkin_time)
-
-    # Convert shift time properly
-    shift_start_time = get_datetime(
-        f"{checkin_date} {shift.start_time}"
-    )
-    shift_end_time = get_datetime(
-        f"{checkin_date} {shift.end_time}"
-    )
+    checkin_time_only = get_time(request_data['time'])
 
 
-    if log_type == "IN":
-        # 1️⃣ Before shift start
-        if checkin_time < shift_start_time:
-            frappe.response["message"] = "Cannot check in before shift start time"
-            return
-
-        # 2️⃣ After shift end
-        if checkin_time > shift_end_time:
-            frappe.response["message"] = "Cannot check in after shift end time"
-            return
-
-        message = "Attendance Added"
-
-        # 3️⃣ Late check
-        if cint(shift.late_entry_grace_period):
-            allowed_time = shift_start_time + timedelta(
-                minutes=cint(shift.late_entry_grace_period)
-            )
-
-            if checkin_time > allowed_time:
-                message = "Late Check-in"
-
-
-    elif log_type == "OUT":
-
-        checkin_record = frappe.db.sql(
-            """
-            SELECT time
-            FROM `tabEmployee Checkin`
-            WHERE employee = %s AND log_type = 'IN'
-            ORDER BY time DESC LIMIT 1
-            """,
-            (employee,),
-        )
-        
-        if not checkin_record:
-            frappe.response["message"] = "No check-in record found"
-            return
-
-        last_checkin_time = checkin_record[0][0]
-
-        # ⏰ Early checkout (before shift end)
-        if checkin_time < shift_end_time:
-            message = "Early Check-out"
-        else:
-            message = "Check-out Marked"
-
-
-    # Final message (common)
-    # frappe.response["message"] = message
-
+    status, message = validate_checkin_records(log_type, employee, checkin_time, checkin_time_only)
+    if not status:
+        frappe.response["message"] = message
+        return
 
     checkin_doc = frappe.new_doc("Employee Checkin")
     checkin_doc.employee = employee
@@ -588,9 +539,38 @@ def add_attendence_kiosk():
     checkin_doc.device_id = request_data.get("location")
     checkin_doc.custom_latitude = request_data.get("latitude")
     checkin_doc.custom_longitude = request_data.get("longitude")
+
     checkin_doc.flags.ignore_permissions = True
     checkin_doc.save()
-    
-    frappe.db.commit()
-    frappe.response["message"] = message
 
+    if request_data.get("front_image"):
+        file = save_file(
+            request_data["front_image"]["name"],
+            request_data["front_image"]["base64"],
+            "Employee Checkin",
+            checkin_doc.name,
+            decode=True,
+            is_private=0,
+            df="custom_front_image",
+        )
+        frappe.db.set_value(
+            "Employee Checkin", checkin_doc.name, {"custom_front_image": file.file_url}
+        )
+
+    if request_data.get("rear_image"):
+        file = save_file(
+            request_data["rear_image"]["name"],
+            request_data["rear_image"]["base64"],
+            "Employee Checkin",
+            checkin_doc.name,
+            decode=True,
+            is_private=0,
+            df="custom_rear_image",
+        )
+
+        frappe.db.set_value(
+            "Employee Checkin", checkin_doc.name, {"custom_rear_image": file.file_url}
+        )
+
+    frappe.response["message"] = message or "Attendance added"
+    frappe.db.commit()

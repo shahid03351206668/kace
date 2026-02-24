@@ -47,7 +47,7 @@ def send_notification(user_id):
     )
 
     # Get the current time for logging
-    current_time = datetime.now()
+    current_time = frappe.utils.now_datetime()
 
     notification_title = "Random Check Alert"
     notification_body = "Open to mark random check attendance"
