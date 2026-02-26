@@ -343,7 +343,7 @@ def validate_checkin_records(type, employee, date, checkin_time_only=None):
         
         if checkin_time_only < shift_end_time_formatted:
             if diff < cint(settings.min_hours) / 3600:
-                my_custom_time = cint(settings.min_hours) / 3600
+                # my_custom_time = cint(settings.min_hours) / 3600
                 return False, "Minimum working hours not met"
             return True, "Early Check Out"
 
@@ -363,10 +363,12 @@ def validate_checkin_records(type, employee, date, checkin_time_only=None):
             )
 
     elif type == "IN":
-        # Block check-in before the shift start time
-        if date < shift_start_time:
-            return False, "Cannot check in before the shift start time"
-
+        if cint(shift.begin_check_in_before_shift_start_time):
+            if shift_start_time > date and date > (
+                shift_start_time - timedelta(minutes=cint(shift.begin_check_in_before_shift_start_time))
+            ):
+                return True, "Early Check In"
+        
         if date > shift_end_time:
             return False, "Cannot check in after shift end time"
         
