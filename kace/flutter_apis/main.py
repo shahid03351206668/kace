@@ -262,6 +262,7 @@ def get_koisk_users():
     user = frappe.get_list(
         "Employee",
         fields=["name", "user_id", "face_registration_data","employee_name"],
+        filters={"employee_type": "Kiosk User"},
     )
     # return [u for u in user if u.face_registration_data]
     return user
