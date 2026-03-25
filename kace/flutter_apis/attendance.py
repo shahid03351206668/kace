@@ -312,7 +312,20 @@ def validate_checkout_record(employee, date, log_type):
 
 def validate_checkin_records(type, employee, date, checkin_time_only=None):
     settings = frappe.get_doc("Kace Settings", "Kace Settings")
-    shift_name = frappe.db.get_value("Employee", employee, "default_shift")
+    # shift_name = frappe.db.get_value("Employee", employee, "default_shift")
+    shift_name = frappe.db.get_value("Shift Assignment", {"employee": employee}, "shift_type")
+    shift_asg_name = frappe.db.get_value("Shift Assignment", {"employee": employee}, "name")
+    shift_asg_doc = frappe.get_doc("Shift Assignment", shift_asg_name) if shift_asg_name else None
+    
+    if shift_asg_doc:
+        checkin_date = getdate(date)
+        if shift_asg_doc.start_date and shift_asg_doc.end_date:
+            if not (shift_asg_doc.start_date <= checkin_date <= shift_asg_doc.end_date):
+                return False, "Shift is not assigned for this period"
+        
+        
+        
+        
     if not shift_name:
         return False, "Employee has no default shift assigned"
 
@@ -340,10 +353,27 @@ def validate_checkin_records(type, employee, date, checkin_time_only=None):
         diff = (date - checkin_time).total_seconds() / 3600
         shift_end_time_formatted = get_time(shift.end_time)
         
+        if cint(shift.allow_check_out_after_shift_end_time):
+            if shift_end_time < date and date < (
+                shift_end_time + timedelta(minutes=cint(shift.allow_check_out_after_shift_end_time))
+            ):
+                return True, "Attendance added"
+            
+            if date > shift_end_time + timedelta(minutes=cint(shift.allow_check_out_after_shift_end_time)):
+                return False, "Cannot check out after the allowed time"
         
+        
+        
+        
+        
+        
+        # if checkin_time_only < shift_end_time_formatted:
+        #     if diff < cint(shift.working_hours_threshold_for_absent) / 3600:
+        #         # my_custom_time = cint(settings.min_hours) / 3600
+        #         return False, "Minimum working hours not met"
+        #     return True, "Early Check Out"
         if checkin_time_only < shift_end_time_formatted:
-            if diff < cint(settings.min_hours) / 3600:
-                # my_custom_time = cint(settings.min_hours) / 3600
+            if diff < cint(shift.working_hours_threshold_for_absent):
                 return False, "Minimum working hours not met"
             return True, "Early Check Out"
 
@@ -367,7 +397,10 @@ def validate_checkin_records(type, employee, date, checkin_time_only=None):
             if shift_start_time > date and date > (
                 shift_start_time - timedelta(minutes=cint(shift.begin_check_in_before_shift_start_time))
             ):
-                return True, "Early Check In"
+                return True, f"Early Check In"
+            
+            if date < (shift_start_time - timedelta(minutes=cint(shift.begin_check_in_before_shift_start_time))):
+                return False, "Cannot check in before the allowed time"
         
         if date > shift_end_time:
             return False, "Cannot check in after shift end time"
