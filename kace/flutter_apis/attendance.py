@@ -541,6 +541,8 @@ def add_attendence_notification():
 @frappe.whitelist(allow_guest=True)
 def add_attendence_kiosk():
     request_data = json.loads(frappe.request.data)
+    
+    # frappe.log_error(request_data, "Kiosk Attendance Data")
     # user = get_user_details()
 
     if not request_data:
@@ -572,8 +574,8 @@ def add_attendence_kiosk():
     checkin_doc.time = checkin_time
     checkin_doc.custom_location_name = request_data.get("location_name")
     checkin_doc.device_id = request_data.get("location")
-    checkin_doc.custom_latitude = request_data.get("latitude")
-    checkin_doc.custom_longitude = request_data.get("longitude")
+    checkin_doc.latitude = request_data.get("latitude")
+    checkin_doc.longitude = request_data.get("longitude")
 
     checkin_doc.flags.ignore_permissions = True
     checkin_doc.save()
