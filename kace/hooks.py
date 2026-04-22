@@ -268,5 +268,6 @@ scheduler_events = {
 
 fixtures = [
     {"dt": "Custom Field", "filters": {"module": "KACE"}},
+    {"dt": "Property Setter", "filters": {"module": "KACE"}},
     {"dt": "Client Script", "filters": {"module": "KACE"}},
 ]

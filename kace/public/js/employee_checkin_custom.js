@@ -9,10 +9,10 @@ frappe.ui.form.on('Employee Checkin', {
             "allow_geolocation_tracking",
         ).then(allow_geolocation_tracking => {
             if (!allow_geolocation_tracking) {
-                hide_field(["fetch_geolocation", "latitude", "longitude", "geolocation"]);
+                hide_field(["fetch_geolocation", "custom_latitude", "custom_longitude", "geolocation"]);
                 return;
             }
-            show_field(["fetch_geolocation", "latitude", "longitude", "geolocation"]);
+            show_field(["fetch_geolocation", "custom_latitude", "custom_longitude", "geolocation"]);
         });
     },
     onload(frm) {
@@ -39,13 +39,16 @@ frappe.ui.form.on('Employee Checkin', {
         hrms.fetch_geolocation(frm);
     },
     auto_fetch_geolocation(frm) {
+        if(!frm.is_new() ) return;
+        
         navigator.geolocation.getCurrentPosition(
             function (position) {
+                
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
-
-                frm.set_value("latitude", lat);
-                frm.set_value("longitude", lng);
+                
+                frm.set_value("custom_latitude", lat);
+                frm.set_value("custom_longitude", lng);
 
                 const geojson = JSON.stringify({
                     type: "FeatureCollection",
@@ -66,6 +69,7 @@ frappe.ui.form.on('Employee Checkin', {
                     message: __("Location fetched successfully."),
                     indicator: "green",
                 });
+            
             },
             function (error) {
                 frappe.show_alert({

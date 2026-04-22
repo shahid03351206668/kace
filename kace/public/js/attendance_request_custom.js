@@ -35,6 +35,7 @@ frappe.ui.form.on("Attendance Request", {
     },
 
     auto_fetch_geolocation(frm) {
+        if(!frm.is_new()) return;
         navigator.geolocation.getCurrentPosition(
             function (position) {
                 const lat = position.coords.latitude;

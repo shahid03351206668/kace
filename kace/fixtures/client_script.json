@@ -48,10 +48,10 @@
   "doctype": "Client Script",
   "dt": "Employee Checkin",
   "enabled": 0,
-  "modified": "2025-12-04 20:21:57.701890",
+  "modified": "2026-04-07 16:33:27.151099",
   "module": "KACE",
   "name": "Employee Checkin",
-  "script": "\r\nfrappe.ui.form.on('Employee Checkin', {\r\n    refresh(frm) {\r\n        frm.set_df_property(\"custom_map_location\", \"options\", `<div style=\"width: 100%;\"><iframe width=\"100%\" height=\"600\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\"\r\n                    marginwidth=\"0\"\r\n                    src=\"https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=${frm.doc.custom_latitude}, ${frm.doc.custom_longitude}&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed\"><a\r\n                        href=\"https://www.gps.ie/\">gps trackers</a></iframe></div>`)\r\n\r\n        // your code here\r\n    }\r\n})",
+  "script": "\r\nfrappe.ui.form.on('Employee Checkin', {\r\n    refresh(frm) {\r\n\r\n        frappe.db.get_single_value(\"HR Settings\", \"allow_geolocation_tracking\")\r\n            .then((allow_geolocation_tracking) => {\r\n                if (allow_geolocation_tracking) {\r\n                    show_field([\"fetch_geolocation\", \"latitude\", \"longitude\", \"geolocation\"]);\r\n                } else {\r\n                    hide_field([\"fetch_geolocation\", \"latitude\", \"longitude\", \"geolocation\"]);\r\n                }\r\n            });\r\n            \r\n        frm.set_df_property(\"custom_map_location\", \"options\", `<div style=\"width: 100%;\"><iframe width=\"100%\" height=\"600\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\"\r\n                    marginwidth=\"0\"\r\n                    src=\"https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=${frm.doc.custom_latitude}, ${frm.doc.custom_longitude}&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed\"><a\r\n                        href=\"https://www.gps.ie/\">gps trackers</a></iframe></div>`)\r\n    }\r\n})",
   "view": "Form"
  },
  {
