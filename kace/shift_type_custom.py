@@ -71,6 +71,7 @@ def mark_attendance_and_link_log(
                         "modify_half_day_status": 0,
                     },
                 )
+                
             else:
                 attendance = frappe.new_doc("Attendance")
                 attendance.update(
@@ -98,6 +99,9 @@ def mark_attendance_and_link_log(
                         "Employee was marked Absent for not meeting the working hours threshold."
                     )
                 )
+            a = frappe.get_doc("Attendance", attendance.name)
+            if a.in_time and a.out_time:
+                a.submit()
             update_attendance_in_checkins(log_names, attendance.name)
             return attendance
         except frappe.ValidationError as e:

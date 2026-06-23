@@ -49,17 +49,14 @@ def get_expenses_data():
 @frappe.whitelist()
 def get_leaves():
     try:
-        user_details = get_user_details()
-        if user_details:
-            data = frappe.db.sql(
-                f""" select
+        data = frappe.db.sql(
+                """ select
                                 leave_type,
                                 employee_name,
                                 status,
                                 from_date,
                                 to_date
                            from `tabLeave Application`
-                          where employee =  '{user_details.get("employee")}'
                           order by creation desc
                            """,
                 as_dict=True,
@@ -78,9 +75,7 @@ def get_leaves():
             #     )
             #     or []
             # )
-            make_response(success=True, data=data)
-        else:
-            make_response(success=False, message="Invalid User")
+        make_response(success=True, data=data)
     except Exception as e:
         make_response(success=False, message=str(e))
 
