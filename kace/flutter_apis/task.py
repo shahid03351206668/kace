@@ -46,11 +46,11 @@ def add_task():
 
 @frappe.whitelist()
 def get_task():
-    user = get_user_details()
-    if not user:
-        frappe.local.response["http_status_code"] = 401
-        frappe.response["message"] = "Invalid User"
-        return
+    # user = get_user_details()
+    # if not user:
+    #     frappe.local.response["http_status_code"] = 401
+    #     frappe.response["message"] = "Invalid User"
+    #     return
 
     tasks = frappe.get_list(
         "Task",

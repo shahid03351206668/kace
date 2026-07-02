@@ -49,32 +49,24 @@ def get_expenses_data():
 @frappe.whitelist()
 def get_leaves():
     try:
-        data = frappe.db.sql(
-                """ select
-                                leave_type,
-                                employee_name,
-                                status,
-                                from_date,
-                                to_date
-                           from `tabLeave Application`
-                          order by creation desc
-                           """,
-                as_dict=True,
-            )
-            # data = (
-            #     frappe.get_list(
-            #         "Leave Application",
-            #         fields=[
-            #             "leave_type",
-            #             "employee_name",
-            #             "status",
-            #             "from_date",
-            #             "to_date",
-            #         ],
-            #         order_by="creation desc",
-            #     )
-            #     or []
-            # )
+        data = frappe.get_list(
+            "Leave Application",
+            fields=["leave_type", "employee_name", "status", "from_date", "to_date"],
+        )
+        # data = (
+        #     frappe.get_list(
+        #         "Leave Application",
+        #         fields=[
+        #             "leave_type",
+        #             "employee_name",
+        #             "status",
+        #             "from_date",
+        #             "to_date",
+        #         ],
+        #         order_by="creation desc",
+        #     )
+        #     or []
+        # )
         make_response(success=True, data=data)
     except Exception as e:
         make_response(success=False, message=str(e))
@@ -115,7 +107,9 @@ def get_leaves_and_expenses():
             for j in expenses:
                 j["type"] = "expenses"
                 j["redirect_url"] = f"/app/print/Expense%20Claim/{i.id}"
-                j["pdf_url"] = f"/api/method/frappe.utils.print_format.download_pdf?doctype=Expense%20Claim&name={i.id}&format=Standard&no_letterhead=1&letterhead=No%20Letterhead&settings=%7B%7D&_lang=en"
+                j["pdf_url"] = (
+                    f"/api/method/frappe.utils.print_format.download_pdf?doctype=Expense%20Claim&name={i.id}&format=Standard&no_letterhead=1&letterhead=No%20Letterhead&settings=%7B%7D&_lang=en"
+                )
 
             data.extend(expenses)
             data.extend(leaves)

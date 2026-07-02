@@ -118,18 +118,18 @@ def validate_employee(self, method=None):
         frappe.db.set_value("User", self.user_id, {"enabled": 1})
 
 
-def validate_for_enabled_user_id_func(self, enabled):
-    if not self.status == "Active":
-        return
+# def validate_for_enabled_user_id_func(self, enabled):
+#     if not self.status == "Active":
+#         return
 
-    if enabled is None:
-        frappe.throw("User {0} does not exist").format(self.user_id)
+#     if enabled is None:
+#         frappe.throw("User {0} does not exist").format(self.user_id)
 
-    # if enabled == 0:
-    #     frappe.throw(_("User {0} is disabled").format(self.user_id), EmployeeUserDisabledError)
+#     # if enabled == 0:
+#     #     frappe.throw(_("User {0} is disabled").format(self.user_id), EmployeeUserDisabledError)
 
 
-Employee.validate_for_enabled_user_id = validate_for_enabled_user_id_func
+# Employee.validate_for_enabled_user_id = validate_for_enabled_user_id_func
 
 
 def get_user_language() -> str:

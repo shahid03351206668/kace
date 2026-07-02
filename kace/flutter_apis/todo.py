@@ -14,11 +14,11 @@ def striphtml(data):
 
 @frappe.whitelist()
 def get_user_todo():
-    user = get_user_details()
-    if not user:
-        frappe.local.response["http_status_code"] = 401
-        frappe.response["message"] = "Invalid User"
-        return
+    # user = get_user_details()
+    # if not user:
+    #     frappe.local.response["http_status_code"] = 401
+    #     frappe.response["message"] = "Invalid User"
+    #     return
 
     todos = frappe.get_list(
         "ToDo",
